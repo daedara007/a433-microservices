@@ -18,6 +18,9 @@ jobs:
     name: Build and Push Docker Image
     needs: lint-dockerfile
     runs-on: ubuntu-latest
+    permissions:  # Add explicit permissions
+      contents: read
+      packages: write  # Required for pushing to GHCR
     steps:
       - uses: actions/checkout@v3
       - name: Docker Login to GHCR
