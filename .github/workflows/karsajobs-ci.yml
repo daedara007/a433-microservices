@@ -44,6 +44,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Docker Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
       - name: Grant execute permission
         run: chmod +x build_push_image_karsajobs.sh
 
