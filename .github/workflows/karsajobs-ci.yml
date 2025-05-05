@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Grant execute permission
-        run: chmod +x backend/build_push_image_karsajobs.sh
+        run: chmod +x build_push_image_karsajobs.sh
 
       - name: Build and Push Backend Image
-        run: bash backend/build_push_image_karsajobs.sh
+        run: bash build_push_image_karsajobs.sh
