@@ -18,7 +18,7 @@ jobs:
     name: Build and Push Docker Image
     needs: lint-dockerfile
     runs-on: ubuntu-latest
-    permissions:  # Add explicit permissions
+    permissions:  # 👈 Add explicit permissions
       contents: read
       packages: write  # Required for pushing to GHCR
     steps:
@@ -28,5 +28,5 @@ jobs:
       - name: Build and Push Frontend Image
         env:
           GITHUB_USER: ${{ github.repository_owner }}
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Match script expectations
         run: bash build_push_image_karsajobs_ui.sh
