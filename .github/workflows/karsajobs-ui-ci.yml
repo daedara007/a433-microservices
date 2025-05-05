@@ -1,7 +1,7 @@
-name: Karsa Jobs CI (Frontend)
+name: Karsa Jobs CI (Backend)
 on:
   push:
-    branches: [ karsajobs-ui ]
+    branches: [ karsajobs ]  # Trigger on pushes to the 'karsajobs' branch
 
 jobs:
   lint-dockerfile:
@@ -10,23 +10,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Hadolint Dockerfile Linter
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.1.0  # Runs Hadolint on the Dockerfile:contentReference[oaicite:19]{index=19}
         with:
           dockerfile: ./Dockerfile
 
+  test-app:
+    name: Run Go Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5          # Set up Go environment:contentReference[oaicite:20]{index=20}
+        with:
+          go-version: '1.20'
+      - name: Run Tests
+        run: |
+          go test -v -short --count=1 $(go list ./...)
+
   build-and-push:
     name: Build and Push Docker Image
-    needs: lint-dockerfile
+    needs: [lint-dockerfile, test-app]
     runs-on: ubuntu-latest
-    permissions:  # 👈 Add explicit permissions
-      contents: read
-      packages: write  # Required for pushing to GHCR
     steps:
       - uses: actions/checkout@v3
       - name: Docker Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-      - name: Build and Push Frontend Image
-        env:
-          GITHUB_USER: ${{ github.repository_owner }}
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Match script expectations
-        run: bash build_push_image_karsajobs_ui.sh
+      - name: Build and Push Backend Image
+        run: bash build_push_image_karsajobs.sh
