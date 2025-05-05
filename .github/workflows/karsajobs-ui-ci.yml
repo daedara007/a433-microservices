@@ -1,0 +1,26 @@
+name: Karsa Jobs CI (Frontend)
+on:
+  push:
+    branches: [ karsajobs-ui ]  # Trigger on pushes to the 'karsajobs-ui' branch
+
+jobs:
+  lint-dockerfile:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Hadolint Dockerfile Linter
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./Dockerfile
+
+  build-and-push:
+    name: Build and Push Docker Image
+    needs: lint-dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+      - name: Build and Push Frontend Image
+        run: bash build_push_image_karsajobs_ui.sh
