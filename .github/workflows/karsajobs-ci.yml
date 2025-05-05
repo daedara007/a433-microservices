@@ -31,9 +31,12 @@ jobs:
     name: Build and Push Docker Image
     needs: [lint-dockerfile, test-app]
     runs-on: ubuntu-latest
+    env:  # <--- environment variables disini
+      GITHUB_USER: ${{ github.repository_owner }}
+      CR_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Docker Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+        run: echo "$CR_PAT" | docker login ghcr.io -u $GITHUB_USER --password-stdin
       - name: Build and Push Backend Image
         run: bash build_push_image_karsajobs.sh
