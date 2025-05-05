@@ -1,4 +1,9 @@
 name: Karsa Jobs CI (Backend)
+
+permissions:
+  contents: read      # tetap hanya read untuk kode
+  packages: write     # grant write pada GHCR
+
 on:
   push:
     branches: [ karsajobs ]  # Trigger on pushes to the 'karsajobs' branch
