@@ -1,7 +1,7 @@
 name: Karsa Jobs CI (Frontend)
 on:
   push:
-    branches: [ karsajobs-ui ]  # Trigger on pushes to the 'karsajobs-ui' branch
+    branches: [ karsajobs-ui ]
 
 jobs:
   lint-dockerfile:
@@ -23,4 +23,7 @@ jobs:
       - name: Docker Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
       - name: Build and Push Frontend Image
+        env:
+          GITHUB_USER: ${{ github.repository_owner }}
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: bash build_push_image_karsajobs_ui.sh
