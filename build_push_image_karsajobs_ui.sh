@@ -14,6 +14,7 @@ echo "${CR_PAT}" | docker login ghcr.io -u "${GITHUB_USER}" --password-stdin
 
 echo "Building Docker image ghcr.io/${GITHUB_USER}/karsajobs-ui:latest..."
 docker build -t ghcr.io/${GITHUB_USER}/karsajobs-ui:latest .
+  --build-arg VUE_APP_API_BASE_URL=http://karsajobs-service:8000 .
 
 echo "Pushing Docker image to ghcr.io..."
 docker push ghcr.io/${GITHUB_USER}/karsajobs-ui:latest
