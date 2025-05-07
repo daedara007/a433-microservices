@@ -17,8 +17,11 @@ func (app *application) routes() http.Handler {
 	mux.Use(middleware.RealIP)
 	mux.Use(middleware.Timeout(60 * time.Second))
 	mux.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "DELETE"},
+		AllowedOrigins:   []string{"*"}, // atur domain frontend-mu jika perlu
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		AllowCredentials: false,
+		Debug:            false,
 	}))
 
 	mux.Get("/", home)
