@@ -32,7 +32,7 @@ jobs:
     name: Build and Push Docker Image
     needs: [lint-dockerfile, test-app]  # Hanya jalan jika job sebelumnya sukses
     runs-on: ubuntu-latest
-    permissions:  # 🔐 Mengatur izin akses untuk GitHub Actions
+    permissions:  # Mengatur izin akses untuk GitHub Actions
       contents: read  # Izin baca kode
       packages: write  # Izin tulis ke GitHub Package Registry
     steps:
