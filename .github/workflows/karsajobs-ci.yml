@@ -1,18 +1,19 @@
 name: Karsa Jobs CI (Backend)
 on:
   push:
-    branches: [ karsajobs ]  # Trigger on pushes to the 'karsajobs' branch
+    branches: [ karsajobs ]  # Trigger pada push ke branch 'karsajobs'
+    # Workflow hanya akan jalan saat ada perubahan di branch karsajobs
 
 jobs:
   lint-dockerfile:
     name: Lint Dockerfile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Menjalankan job di runner Ubuntu terbaru
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3  # Mengambil kode dari repository
       - name: Run Hadolint Dockerfile Linter
-        uses: hadolint/hadolint-action@v3.1.0  # Runs Hadolint on the Dockerfile:contentReference[oaicite:19]{index=19}
+        uses: hadolint/hadolint-action@v3.1.0  # Memeriksa kualitas Dockerfile
         with:
-          dockerfile: ./Dockerfile
+          dockerfile: ./Dockerfile  # Target file yang akan diperiksa
 
   test-app:
     name: Run Go Tests
@@ -20,26 +21,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v5          # Set up Go environment:contentReference[oaicite:20]{index=20}
+        uses: actions/setup-go@v5  # Menginstal environment Go
         with:
-          go-version: '1.20'
+          go-version: '1.20'  # Versi Go yang digunakan
       - name: Run Tests
-        run: |
-          go test -v -short --count=1 $(go list ./...)
+        run: |  # Menjalankan test unit Go
+          go test -v -short --count=1 $(go list ./...)  # Opsi: verbose, test cepat
 
   build-and-push:
     name: Build and Push Docker Image
-    needs: [lint-dockerfile, test-app]
+    needs: [lint-dockerfile, test-app]  # Hanya jalan jika job sebelumnya sukses
     runs-on: ubuntu-latest
-    permissions:  # 👈 Add explicit permissions
-      contents: read
-      packages: write  # Required for pushing to GHCR
+    permissions:  # 🔐 Mengatur izin akses untuk GitHub Actions
+      contents: read  # Izin baca kode
+      packages: write  # Izin tulis ke GitHub Package Registry
     steps:
       - uses: actions/checkout@v3
       - name: Docker Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin  # Autentikasi ke GHCR
       - name: Build and Push Backend Image
         env:
-          GITHUB_USER: ${{ github.repository_owner }}
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Match script expectations
-        run: bash build_push_image_karsajobs.sh
+          GITHUB_USER: ${{ github.repository_owner }}  # Pemilik repo sebagai username
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Menggunakan GitHub Token sebagai PAT
+        run: bash build_push_image_karsajobs.sh  # Menjalankan script build/push
