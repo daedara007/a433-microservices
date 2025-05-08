@@ -1,32 +1,36 @@
 name: Karsa Jobs CI (Frontend)
 on:
   push:
-    branches: [ karsajobs-ui ]
+    branches: [ karsajobs-ui ]  # Memicu workflow saat push ke branch karsajobs-ui
 
 jobs:
   lint-dockerfile:
     name: Lint Dockerfile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Menjalankan job di runner Ubuntu terbaru
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3  # Mengambil kode dari repository
       - name: Run Hadolint Dockerfile Linter
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.1.0  # Memeriksa kualitas Dockerfile
         with:
-          dockerfile: ./Dockerfile
+          dockerfile: ./Dockerfile  # File target yang akan diperiksa
 
   build-and-push:
     name: Build and Push Docker Image
-    needs: lint-dockerfile
+    needs: lint-dockerfile  # Hanya jalan jika job lint-dockerfile sukses
     runs-on: ubuntu-latest
-    permissions:  # 👈 Add explicit permissions
-      contents: read
-      packages: write  # Required for pushing to GHCR
+    permissions:  #  Mengatur hak akses untuk GitHub Actions
+      contents: read   # Izin membaca kode
+      packages: write  # Diperlukan untuk push image ke GHCR
     steps:
       - uses: actions/checkout@v3
+      
+      # Autentikasi ke GitHub Container Registry
       - name: Docker Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+      
+      # Membangun dan mengunggah image frontend
       - name: Build and Push Frontend Image
         env:
-          GITHUB_USER: ${{ github.repository_owner }}
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Match script expectations
-        run: bash build_push_image_karsajobs_ui.sh
+          GITHUB_USER: ${{ github.repository_owner }}  # Menggunakan pemilik repo sebagai username
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  # Menggunakan GitHub Token untuk autentikasi
+        run: bash build_push_image_karsajobs_ui.sh  # Menjalankan script build/push
