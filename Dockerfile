@@ -1,14 +1,14 @@
-# Menggunakan image Node.js berbasis Alpine (ringan)
+# ini menggunakan image Node.js berbasis Alpine (ringan)
 FROM node:18-alpine
-# Set direktori kerja di dalam container
+# ini adalah direktori kerja di dalam container
 WORKDIR /app 
-# Copy file dependensi (package.json dan lock)
+# buat copy file dependensi
 COPY package*.json ./
-# Install dependencies
+# buat install dependensi
 RUN npm install
-# Salin semua kode aplikasi ke dalam image
+# buat salin semua kode aplikasi ke dalam image
 COPY . .
-# Mengekspos port aplikasi (misal 3000)
+# untuk mengekspos port aplikasi ke 3000
 EXPOSE 3000
-# Perintah default saat container dijalankan
+# ini adalah perintah default saat container dijalankan
 CMD ["npm", "start"]
