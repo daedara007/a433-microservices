@@ -8,7 +8,7 @@ COPY package*.json ./
 RUN npm install
 # buat salin semua kode aplikasi ke dalam image
 COPY . .
-# untuk mengekspos port aplikasi ke 3000
-EXPOSE 3000
+# untuk mengekspos port aplikasi ke 3001
+EXPOSE 3001
 # ini adalah perintah default saat container dijalankan
 CMD ["npm", "start"]
